@@ -1,5 +1,5 @@
 import { getModules } from "@/actions/get-modules";
-
+import Image from 'next/image';
 import ModuleMenu from "./ModuleMenu";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
@@ -22,6 +22,13 @@ const SideBar = async ({ build }: { build: number }) => {
 
   if (!dict) return null;
 
-  return <ModuleMenu modules={modules} dict={dict} build={build} />;
+  return (
+    <div>
+        <div className="flex justify-center py-6">
+            <Image src="/images/logo-text.svg" alt="SoftGAN Logo" width={150} height={50} />
+        </div>
+        <ModuleMenu modules={modules} dict={dict} build={build} />
+    </div>
+  )
 };
 export default SideBar;

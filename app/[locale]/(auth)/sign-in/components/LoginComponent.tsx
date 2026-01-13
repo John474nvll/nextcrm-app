@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
-
+import Image from 'next/image';
 import { Icons } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 import {
@@ -167,7 +167,8 @@ export function LoginComponent() {
 
   return (
     <Card className="shadow-lg my-5 ">
-      <CardHeader className="space-y-1">
+     <CardHeader className="flex flex-col items-center text-center space-y-1">
+        <Image src="/images/logo.svg" alt="SoftGAN Logo" width={80} height={80} />
         <CardTitle className="text-2xl">Login</CardTitle>
         <CardDescription>Click here to login with: </CardDescription>
       </CardHeader>
