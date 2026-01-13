@@ -1,4 +1,4 @@
-// 1. Define el proveedor de la base de datos y el cliente de Prisma
+// Proveedor y datasource
 generator client {
   provider = "prisma-client-js"
 }
@@ -8,29 +8,19 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// 2. Modelo de Usuario (simplificado y adaptado para PostgreSQL)
+// Modelo MÍNIMO para NextAuth.js
 model User {
-  id               String        @id @default(cuid())
-  name             String?
-  email            String?       @unique
-  emailVerified    DateTime?
-  image            String?
-  hashedPassword   String?
-  createdAt        DateTime      @default(now())
-  updatedAt        DateTime      @updatedAt
-  
-  // Relaciones
-  accounts         Account[]
-  sessions         Session[]
-  
-  // Relaciones con los nuevos modelos de CRM
-  customers        Customer[]
-  campaigns        Campaign[]
-  sentMessages     ChatMessage[] @relation("Sender")
-  integrations     Integration[]
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  accounts      Account[]
+  sessions      Session[]
 }
 
-// Modelo para la autenticación de NextAuth.js
 model Account {
   id                 String  @id @default(cuid())
   userId             String
@@ -53,7 +43,6 @@ model Account {
   @@unique([provider, providerAccountId])
 }
 
-// Modelo para las sesiones de NextAuth.js
 model Session {
   id           String   @id @default(cuid())
   sessionToken String   @unique
@@ -63,95 +52,4 @@ model Session {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-}
-
-// 3. NUEVO: Modelo para Clientes (Customers)
-model Customer {
-  id          String   @id @default(cuid())
-  name        String
-  email       String?  @unique
-  phone       String?
-  company     String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  
-  // Relación con el usuario que gestiona este cliente
-  userId      String
-  managedBy   User     @relation(fields: [userId], references: [id])
-  
-  // Relación con los mensajes del chat
-  messages    ChatMessage[]
-}
-
-// 4. NUEVO: Modelo para Campañas (Campaigns)
-model Campaign {
-  id          String   @id @default(cuid())
-  name        String
-  description String?
-  channel     CampaignChannel @default(EMAIL)
-  status      CampaignStatus  @default(DRAFT)
-  startDate   DateTime?
-  endDate     DateTime?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  
-  // Relación con el usuario que creó la campaña
-  userId      String
-  createdBy   User     @relation(fields: [userId], references: [id])
-}
-
-enum CampaignStatus {
-  DRAFT
-  ACTIVE
-  COMPLETED
-  ARCHIVED
-}
-
-enum CampaignChannel {
-  EMAIL
-  SMS
-  WHATSAPP
-  SOCIAL_MEDIA
-}
-
-// 5. NUEVO: Modelo para Integraciones (por ejemplo, WhatsApp, etc.)
-model Integration {
-  id          String    @id @default(cuid())
-  type        IntegrationType
-  apiKey      String?   // Para guardar tokens de API, etc.
-  accessToken String?
-  isActive    Boolean   @default(false)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-
-  // Relación con el usuario que posee esta integración
-  userId      String
-  user        User      @relation(fields: [userId], references: [id])
-}
-
-enum IntegrationType {
-  WHATSAPP_BUSINESS
-  FACEBOOK_MESSENGER
-  GOOGLE_MY_BUSINESS
-}
-
-// 6. NUEVO: Modelo para Mensajes de Chat (ChatMessage)
-model ChatMessage {
-  id          String   @id @default(cuid())
-  content     String
-  direction   MessageDirection // "INCOMING" o "OUTGOING"
-  timestamp   DateTime @default(now())
-  
-  // Relación con el remitente (el usuario del CRM)
-  senderId    String
-  sender      User     @relation("Sender", fields: [senderId], references: [id])
-  
-  // Relación con el destinatario (el cliente)
-  customerId  String
-  customer    Customer @relation(fields: [customerId], references: [id])
-}
-
-enum MessageDirection {
-  INCOMING
-  OUTGOING
 }

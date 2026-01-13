@@ -7,19 +7,19 @@ import bcrypt from "bcrypt";
 import { newUserNotify } from "./new-user-notify";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 
-function getGoogleCredentials(): { clientId: string; clientSecret: string } {
-  const clientId = process.env.GOOGLE_ID;
-  const clientSecret = process.env.GOOGLE_SECRET;
-  if (!clientId || clientId.length === 0) {
-    throw new Error("Missing GOOGLE_ID");
-  }
+// function getGoogleCredentials(): { clientId: string; clientSecret: string } {
+//   const clientId = process.env.GOOGLE_ID;
+//   const clientSecret = process.env.GOOGLE_SECRET;
+//   if (!clientId || clientId.length === 0) {
+//     throw new Error("Missing GOOGLE_ID");
+//   }
 
-  if (!clientSecret || clientSecret.length === 0) {
-    throw new Error("Missing GOOGLE_SECRET");
-  }
+//   if (!clientSecret || clientSecret.length === 0) {
+//     throw new Error("Missing GOOGLE_SECRET");
+//   }
 
-  return { clientId, clientSecret };
-}
+//   return { clientId, clientSecret };
+// }
 
 export const authOptions: NextAuthOptions = {
   secret: process.env.JWT_SECRET,
@@ -29,16 +29,16 @@ export const authOptions: NextAuthOptions = {
   },
 
   providers: [
-    GoogleProvider({
-      clientId: getGoogleCredentials().clientId,
-      clientSecret: getGoogleCredentials().clientSecret,
-    }),
+    // GoogleProvider({
+    //   clientId: getGoogleCredentials().clientId,
+    //   clientSecret: getGoogleCredentials().clientSecret,
+    // }),
 
-    GitHubProvider({
-      name: "github",
-      clientId: process.env.GITHUB_ID!,
-      clientSecret: process.env.GITHUB_SECRET!,
-    }),
+    // GitHubProvider({
+    //   name: "github",
+    //   clientId: process.env.GITHUB_ID!,
+    //   clientSecret: process.env.GITHUB_SECRET!,
+    // }),
 
     CredentialsProvider({
       name: "credentials",
