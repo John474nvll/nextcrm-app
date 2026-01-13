@@ -1,0 +1,51 @@
+{
+  "RootLayout": {
+    "title": "NextCRM",
+    "description": "NextCRM es un CRM de código abierto creado sobre NextJS."
+  },
+  "ModuleMenu": {
+    "dashboard": "Tablero",
+    "crm": {
+      "title": "Ventas",
+      "accounts": "Empresas",
+      "opportunities": "Oportunidades",
+      "contacts": "Contactos",
+      "leads": "Prospectos",
+      "contracts": "Contratos"
+    },
+    "projects": "Proyectos",
+    "emails": "Correos electrónicos",
+    "tasks": "Tareas",
+    "invoices": "Facturas",
+    "reports": "Informes",
+    "documents": "Documentos",
+    "storage": "Almacenamiento",
+    "settings": "Administración"
+  },
+  "DashboardPage": {
+    "containerTitle": "Tablero",
+    "totalRevenue": "Ingresos totales",
+    "containerDescription": "Bienvenido a NextCRM, aquí puedes ver toda la información importante sobre tu negocio.",
+    "expectedRevenue": "Ingresos esperados",
+    "activeUsers": "Usuarios activos",
+    "accounts": "Empresas",
+    "opportunities": "Tratos",
+    "contacts": "Contactos",
+    "leads": "Prospectos",
+    "projects": "Proyectos",
+    "tasks": "Tareas",
+    "myTasks": "Mis tareas",
+    "invoices": "Facturas",
+    "documents": "Documentos",
+    "storage": "Almacenamiento"
+  },
+  "RegisterComponent": {
+    "cardTitle": "Crear nueva cuenta",
+    "cardDescription": "Crear cuenta iniciando sesión con",
+    "label": "Idioma",
+    "locale": "{locale, select, de {Alemán} en {Inglés} cz {Checo} uk {Ucraniano} es {Español} other {Desconocido}}"
+  },
+  "CrmModuleMenuComponent": {
+    "menuTitle": "Ventas"
+  }
+}
