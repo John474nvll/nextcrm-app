@@ -8,17 +8,26 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// Modelo MÍNIMO para NextAuth.js
+// Modelos de Autenticación y Usuarios
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime?
-  image         String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  accounts      Account[]
-  sessions      Session[]
+  id               String    @id @default(cuid())
+  name             String?
+  email            String?   @unique
+  emailVerified    DateTime?
+  image            String?
+  password         String?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  accounts         Account[]
+  sessions         Session[]
+  team             Team?     @relation(fields: [teamId], references: [id])
+  teamId           String?
+  tasks            Task[]
+  isAdmin          Boolean   @default(false)
+  isAccountAdmin   Boolean   @default(false)
+  lastLoginAt      DateTime  @default(now())
+  userLanguage     String    @default("en")
+  userStatus       String    @default("PENDING")
 }
 
 model Account {
@@ -52,4 +61,109 @@ model Session {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+// Modelos del CRM
+model Customer {
+  id          String    @id @default(cuid())
+  name        String
+  email       String?
+  phone       String?
+  address     String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  contacts    Contact[]
+  sales       Sale[]
+}
+
+model Campaign {
+  id          String    @id @default(cuid())
+  name        String
+  description String?
+  startDate   DateTime
+  endDate     DateTime
+  budget      Float
+  status      String // e.g., "PLANNED", "ACTIVE", "COMPLETED", "CANCELLED"
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  leads       Lead[]
+}
+
+model Contact {
+  id          String    @id @default(cuid())
+  name        String
+  email       String?
+  phone       String?
+  role        String?
+  customerId  String
+  customer    Customer  @relation(fields: [customerId], references: [id])
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Lead {
+  id          String    @id @default(cuid())
+  name        String
+  email       String    @unique
+  phone       String?
+  status      String // e.g., "NEW", "CONTACTED", "QUALIFIED", "LOST"
+  source      String?
+  campaignId  String?
+  campaign    Campaign? @relation(fields: [campaignId], references: [id])
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Opportunity {
+  id          String    @id @default(cuid())
+  name        String
+  stage       String // e.g., "PROSPECTING", "QUALIFICATION", "PROPOSAL", "NEGOTIATION", "CLOSED_WON", "CLOSED_LOST"
+  value       Float
+  closeDate   DateTime
+  leadId      String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Product {
+  id          String    @id @default(cuid())
+  name        String
+  description String?
+  price       Float
+  sku         String?   @unique
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  sales       Sale[]
+}
+
+model Sale {
+  id          String    @id @default(cuid())
+  amount      Float
+  saleDate    DateTime
+  customerId  String
+  customer    Customer  @relation(fields: [customerId], references: [id])
+  productId   String
+  product     Product   @relation(fields: [productId], references: [id])
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Task {
+  id          String    @id @default(cuid())
+  title       String
+  description String?
+  dueDate     DateTime?
+  status      String // e.g., "PENDING", "IN_PROGRESS", "COMPLETED"
+  userId      String?
+  user        User?     @relation(fields: [userId], references: [id])
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Team {
+  id          String    @id @default(cuid())
+  name        String
+  users       User[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }
