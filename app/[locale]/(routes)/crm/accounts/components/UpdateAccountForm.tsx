@@ -1,19 +1,19 @@
-"use client";
+'use client';
 
-import React from "react";
-import { z } from "zod";
+import React from 'react';
+import { z } from 'zod';
 
-import { useRouter } from "next/navigation";
+import { useRouter } from 'next/navigation';
 
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from '@/components/ui/use-toast';
 
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import axios from "axios";
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import axios from 'axios';
 
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 
-import { Input } from "@/components/ui/input";
+import { Input } from '@/components/ui/input';
 import {
   Form,
   FormControl,
@@ -21,42 +21,34 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
+} from '@/components/ui/form';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import fetcher from "@/lib/fetcher";
-import useSWR from "swr";
-import SuspenseLoading from "@/components/loadings/suspense";
-import { crm_Accounts } from "@prisma/client";
+} from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
+import fetcher from '@/lib/fetcher';
+import useSWR from 'swr';
+import SuspenseLoading from '@/components/loadings/suspense';
 
 interface UpdateAccountFormProps {
-  //TODO: fix this any
   initialData: any;
   open: (value: boolean) => void;
 }
 
-export function UpdateAccountForm({
-  initialData,
-  open,
-}: UpdateAccountFormProps) {
+export function UpdateAccountForm({ initialData, open }: UpdateAccountFormProps) {
   const router = useRouter();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
 
   const { data: industries, isLoading: isLoadingIndustries } = useSWR(
-    "/api/crm/industries",
+    '/api/crm/industries',
     fetcher
   );
-  const { data: users, isLoading: isLoadingUsers } = useSWR(
-    "/api/user",
-    fetcher
-  );
+  const { data: users, isLoading: isLoadingUsers } = useSWR('/api/user', fetcher);
 
   const formSchema = z.object({
     id: z.string().min(5).max(30),
@@ -87,55 +79,23 @@ export function UpdateAccountForm({
 
   type NewAccountFormValues = z.infer<typeof formSchema>;
 
-  //TODO: fix this any
   const form = useForm<any>({
     resolver: zodResolver(formSchema),
-    //@ts-ignore
-    //TODO: fix this
-    defaultValues: initialData
-      ? initialData
-      : {
-          id: "",
-          v: 0,
-          name: "",
-          office_phone: "" as string | null,
-          website: "",
-          fax: "",
-          company_id: "",
-          vat: "",
-          email: "",
-          billing_street: "",
-          billing_postal_code: "",
-          billing_city: "",
-          billing_state: "",
-          billing_country: "",
-          shipping_street: "",
-          shipping_postal_code: "",
-          shipping_city: "",
-          shipping_state: "",
-          shipping_country: "",
-          description: "",
-          assigned_to: "",
-          status: "",
-          annual_revenue: "",
-          member_of: "",
-          industry: "",
-        },
+    defaultValues: initialData || {},
   });
 
   const onSubmit = async (data: NewAccountFormValues) => {
-    //console.log(data);
     setIsLoading(true);
     try {
-      await axios.put("/api/crm/account", data);
+      await axios.patch(`/api/crm/account/${initialData.id}`, data);
       toast({
-        title: "Success",
-        description: "Account updated successfully",
+        title: 'Success',
+        description: 'Account updated successfully',
       });
     } catch (error: any) {
       toast({
-        variant: "destructive",
-        title: "Error",
+        variant: 'destructive',
+        title: 'Error',
         description: error?.response?.data,
       });
     } finally {
@@ -145,15 +105,17 @@ export function UpdateAccountForm({
     }
   };
 
-  if (isLoadingIndustries || isLoadingUsers)
+  if (isLoadingIndustries || isLoadingUsers) {
     return (
       <div>
         <SuspenseLoading />
       </div>
     );
+  }
 
-  if (!industries || !users || !initialData)
+  if (!industries || !users || !initialData) {
     return <div>Something went wrong, there is no data for form</div>;
+  }
 
   return (
     <Form {...form}>
@@ -161,15 +123,6 @@ export function UpdateAccountForm({
         onSubmit={form.handleSubmit(onSubmit)}
         className="w-full h-full px-10"
       >
-        {/*    <div>
-          <pre>
-            <code>{JSON.stringify(form.formState.errors, null, 2)}</code>
-          </pre>
-        </div> */}
-        {/*       <pre>
-          <code>{JSON.stringify(initialData, null, 2)}</code>
-        </pre> */}
-
         <div className=" w-[800px] text-sm">
           <div className="pb-5 space-y-2">
             <FormField
@@ -189,7 +142,7 @@ export function UpdateAccountForm({
                 </FormItem>
               )}
             />
-            <FormField
+             <FormField
               control={form.control}
               name="office_phone"
               render={({ field }) => (
@@ -199,9 +152,7 @@ export function UpdateAccountForm({
                     <Input
                       disabled={isLoading}
                       placeholder="+420 ...."
-                      //@ts-ignore
-                      value={field.value}
-                      onChange={field.onChange}
+                      {...field}
                     />
                   </FormControl>
                   <FormMessage />
@@ -225,7 +176,7 @@ export function UpdateAccountForm({
                 </FormItem>
               )}
             />
-            <FormField
+             <FormField
               control={form.control}
               name="website"
               render={({ field }) => (
@@ -279,7 +230,7 @@ export function UpdateAccountForm({
           </div>
           <div className="flex gap-5 pb-5">
             <div className="w-1/2 space-y-2">
-              <FormField
+                          <FormField
                 control={form.control}
                 name="billing_street"
                 render={({ field }) => (
@@ -360,9 +311,10 @@ export function UpdateAccountForm({
                   </FormItem>
                 )}
               />
+
             </div>
             <div className="w-1/2 space-y-2">
-              <FormField
+               <FormField
                 control={form.control}
                 name="shipping_street"
                 render={({ field }) => (
@@ -447,7 +399,7 @@ export function UpdateAccountForm({
           </div>
           <div className="flex gap-5 pb-5">
             <div className="w-1/2 space-y-2">
-              <FormField
+               <FormField
                 control={form.control}
                 name="description"
                 render={({ field }) => (
@@ -465,8 +417,8 @@ export function UpdateAccountForm({
                 )}
               />
             </div>
-            <div className="w-1/2 space-y-2">
-              <FormField
+             <div className="w-1/2 space-y-2">
+               <FormField
                 control={form.control}
                 name="annual_revenue"
                 render={({ field }) => (
@@ -500,16 +452,13 @@ export function UpdateAccountForm({
                   </FormItem>
                 )}
               />
-              <FormField
+                 <FormField
                 control={form.control}
                 name="industry"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Choose industry</FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Select new account industry" />
@@ -527,16 +476,13 @@ export function UpdateAccountForm({
                   </FormItem>
                 )}
               />
-              <FormField
+                <FormField
                 control={form.control}
                 name="assigned_to"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Assigned to</FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Select a user to assign the account" />

@@ -32,7 +32,7 @@ export async function generateMetadata({ params: { locale } }: Props): Promise<M
   const t = createTranslator({ locale, messages });
 
   return {
-    metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL!),
+    metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL! || "http://localhost:3000"),
     title: t("RootLayout.title"),
     description: t("RootLayout.description"),
     openGraph: {
@@ -46,11 +46,15 @@ export async function generateMetadata({ params: { locale } }: Props): Promise<M
       ],
     },
     twitter: {
-      cardType: "summary_large_image",
-      image: "/images/opengraph-image.png",
-      width: 1200,
-      height: 630,
-      alt: t("RootLayout.title"),
+      card: "summary_large_image",
+      images: [
+        {
+        url: "/images/opengraph-image.png",
+        width: 1200,
+        height: 630,
+        alt: t("RootLayout.title"),
+        }
+      ]
     },
   };
 }
