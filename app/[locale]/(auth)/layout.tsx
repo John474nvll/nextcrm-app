@@ -1,4 +1,3 @@
-import axios from "axios";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createTranslator } from "next-intl";
@@ -11,7 +10,8 @@ import Footer from "@/app/[locale]/(routes)/components/Footer";
 import { DiscordLogoIcon } from "@radix-ui/react-icons";
 
 type Props = {
-  params: Promise<{ locale: string }>;
+  children: React.ReactNode;
+  params: { locale: string };
 };
 
 async function getLocales(locale: string) {
@@ -22,13 +22,7 @@ async function getLocales(locale: string) {
   }
 }
 
-export async function generateMetadata(props: Props) {
-  const params = await props.params;
-
-  const {
-    locale
-  } = params;
-
+export async function generateMetadata({ params: { locale } }: Props) {
   const messages = await getLocales(locale);
   const t = createTranslator({ locale, messages });
   return {
@@ -37,7 +31,7 @@ export async function generateMetadata(props: Props) {
   };
 }
 
-const AuthLayout = async ({ children }: { children: React.ReactNode }) => {
+const AuthLayout = async ({ children }: Props) => {
   //Get github stars from github api
   // const githubStars = await getGithubRepoStars();
 
