@@ -1,7 +1,7 @@
 {
   "RootLayout": {
-    "title": "NextCRM",
-    "description": "NextCRM es un CRM de código abierto creado sobre NextJS."
+    "title": "SoftGAN",
+    "description": "SoftGAN es un CRM de código abierto creado sobre NextJS."
   },
   "ModuleMenu": {
     "dashboard": "Tablero",
@@ -25,7 +25,7 @@
   "DashboardPage": {
     "containerTitle": "Tablero",
     "totalRevenue": "Ingresos totales",
-    "containerDescription": "Bienvenido a NextCRM, aquí puedes ver toda la información importante sobre tu negocio.",
+    "containerDescription": "Bienvenido a SoftGAN, aquí puedes ver toda la información importante sobre tu negocio.",
     "expectedRevenue": "Ingresos esperados",
     "activeUsers": "Usuarios activos",
     "accounts": "Empresas",
