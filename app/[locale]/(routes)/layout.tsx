@@ -1,3 +1,4 @@
+
 import { getServerSession } from "next-auth";
 
 import { authOptions } from "@/lib/auth";
@@ -44,8 +45,6 @@ export default async function AppLayout({
 }) {
   const session = await getServerSession(authOptions);
 
-  //console.log(session, "session");
-
   if (!session) {
     return redirect("/sign-in");
   }
@@ -62,9 +61,8 @@ export default async function AppLayout({
 
   const build = await getAllCommits();
 
-  //console.log(typeof build, "build");
   return (
-    <div className="flex h-screen overflow-hidden">
+    <div className="flex h-screen overflow-hidden bg-gray-100 dark:bg-gray-900">
       <SideBar build={build} />
       <div className="flex flex-col h-full w-full overflow-hidden">
         <Header
@@ -74,7 +72,11 @@ export default async function AppLayout({
           avatar={session.user.image as string}
           lang={session.user.userLanguage as string}
         />
-        <div className="flex-grow overflow-y-auto h-full p-5">{children}</div>
+        <main className="flex-grow overflow-y-auto h-full p-6">
+          <div className="container mx-auto">
+            {children}
+          </div>
+        </main>
         <Footer />
       </div>
     </div>
