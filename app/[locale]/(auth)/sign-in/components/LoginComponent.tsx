@@ -1,1 +1,184 @@
-\nimport { zodResolver } from \"@hookform/resolvers/zod\";\nimport { signIn } from \'next-auth/react\';\nimport { useSearchParams } from \'next/navigation\';\nimport { useState } from \'react\';\nimport { useForm } from \'react-hook-form\';\nimport * as z from \'zod\';\n\nimport { Button } from \'@/components/ui/button\';\nimport {\n  Form,\n  FormControl,\n  FormField,\n  FormItem,\n  FormLabel,\n  FormMessage,\n} from \'@/components/ui/form\';\nimport { Input } from \'@/components/ui/input\';\nimport { toast } from \'@/components/ui/use-toast\';\nimport { cn } from \'@/lib/utils\';\nimport { Icons } from \'../../../../../../components/ui/icons\';\n\nconst formSchema = z.object({\n  email: z.string().email({ message: \'Enter a valid email address\' }),\n  password: z.string().min(1, { message: \'Password is required\' }),\n});\n\ntype UserFormValue = z.infer<typeof formSchema>;\n\nexport default function LoginComponent() {\n    const searchParams = useSearchParams();\n    const callbackUrl = searchParams.get(\'callbackUrl\');\n    const [loading, setLoading] = useState(false);\n    const defaultValues = {\n      email: \'demo@gmail.com\',\n      password: \'123456\'\n    };\n  \n    const form = useForm<UserFormValue>({\n      resolver: zodResolver(formSchema),\n      defaultValues,\n    });\n  \n\n\n    const onSubmit = async (data: UserFormValue) => {\n      signIn(\'credentials\', {\n        email: data.email,\n        password: data.password,\n        callbackUrl: callbackUrl ?? process.env.NEXT_PUBLIC_APP_URL!,\n      });\n    };\n  \n      const [isLoading, setIsLoading] = useState<boolean>(false);\n    \n      const loginWithGoogle = async () => {\n          setIsLoading(true);\n          try {\n            await signIn(\'google\', {\n              callbackUrl: process.env.NEXT_PUBLIC_APP_URL,\n            });\n          } catch (error) {\n            console.log(error, \'error\');\n            toast({\n              variant: \'destructive\',\n              description: \'Something went wrong while logging with your Google account.\',\n            });\n          } finally {\n            setIsLoading(false);\n          }\n        };\n      \n        const loginWithGitHub = async () => {\n          setIsLoading(true);\n          try {\n            await signIn(\'github\', {\n              callbackUrl: process.env.NEXT_PUBLIC_APP_URL,\n            });\n          } catch (error) {\n            console.log(error, \'error\');\n            toast({\n              variant: \'destructive\',\n              description: \'Something went wrong while logging with your GitHub account.\',\n            });\n          } finally {\n            setIsLoading(false);\n          }\n        };\n  \n    return (\n      <div className={cn(\'grid gap-6\',)}\n      >\n        <div className=\"relative\">\n          <div className=\"absolute inset-0 flex items-center\">\n            <span className=\"w-full border-t\" />\n          </div>\n          <div className=\"relative flex justify-center text-xs uppercase\">\n            <span className=\"bg-background px-2 text-muted-foreground\">\n              Or continue with\n            </span>\n          </div>\n        </div>\n        <div className=\"grid grid-cols-2 gap-4\">\n        <Button variant=\"outline\" type=\"button\" disabled={isLoading} onClick={loginWithGitHub}>\n            {isLoading ? (\n              <Icons.spinner className=\"mr-2 h-4 w-4 animate-spin\" />\n            ) : (\n              <Icons.gitHub className=\"mr-2 h-4 w-4\" />\n            )}{ \' \}\n            Github\n          </Button>\n          <Button variant=\"outline\" type=\"button\" disabled={isLoading} onClick={loginWithGoogle}>\n            {isLoading ? (\n              <Icons.spinner className=\"mr-2 h-4 w-4 animate-spin\" />\n            ) : (\n              <Icons.google className=\"mr-2 h-4 w-4\" />\n            )}{ \' \}\n            Google\n          </Button>\n        </div>\n  \n        <div className=\"relative\">\n          <div className=\"absolute inset-0 flex items-center\">\n            <span className=\"w-full border-t\" />\n          </div>\n          <div className=\"relative flex justify-center text-xs uppercase\">\n            <span className=\"bg-background px-2 text-muted-foreground\">\n              Or continue with\n            </span>\n          </div>\n        </div>\n  \n        <Form {...form}>\n          <form\n            onSubmit={form.handleSubmit(onSubmit)}\n            className=\"space-y-2 w-full\"\n          >\n            <FormField\n              control={form.control}\n              name=\"email\"\n              render={({ field }) => (\n                <FormItem>\n                  <FormLabel>Email</FormLabel>\n                  <FormControl>\n                    <Input\n                      type=\"email\"\n                      placeholder=\"Enter your email...\"\n                      disabled={loading}\n                      {...field}\n                    />\n                  </FormControl>\n                  <FormMessage />\n                </FormItem>\n              )}\n            />\n  \n            <FormField\n              control={form.control}\n              name=\"password\"\n              render={({ field }) => (\n                <FormItem>\n                  <FormLabel>Password</FormLabel>\n                  <FormControl>\n                    <Input\n                      type=\"password\"\n                      placeholder=\"Enter your password...\"\n                      disabled={loading}\n                      {...field}\n                    />\n                  </FormControl>\n                  <FormMessage />\n                </FormItem>\n              )}\n            />\n  \n            <Button disabled={loading} className=\"ml-auto w-full\" type=\"submit\">\n              Continue With Email\n            </Button>\n          </form>\n        </Form>\n  \n      </div>\n    );\n  }
+'use client';
+
+import { zodResolver } from "@hookform/resolvers/zod";
+import { signIn } from 'next-auth/react';
+import { useSearchParams } from 'next/navigation';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import * as z from 'zod';
+
+import { Button } from '@/components/ui/button';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { toast } from '@/components/ui/use-toast';
+import { cn } from '@/lib/utils';
+import { Icons } from '@/components/ui/icons';
+
+const formSchema = z.object({
+  email: z.string().email({ message: 'Enter a valid email address' }),
+  password: z.string().min(1, { message: 'Password is required' }),
+});
+
+type UserFormValue = z.infer<typeof formSchema>;
+
+export default function LoginComponent() {
+    const searchParams = useSearchParams();
+    const callbackUrl = searchParams.get('callbackUrl');
+    const [loading, setLoading] = useState(false);
+    const defaultValues = {
+      email: 'demo@gmail.com',
+      password: '123456'
+    };
+  
+    const form = useForm<UserFormValue>({
+      resolver: zodResolver(formSchema),
+      defaultValues,
+    });
+  
+
+
+    const onSubmit = async (data: UserFormValue) => {
+      signIn('credentials', {
+        email: data.email,
+        password: data.password,
+        callbackUrl: callbackUrl ?? process.env.NEXT_PUBLIC_APP_URL!,
+      });
+    };
+  
+      const [isLoading, setIsLoading] = useState<boolean>(false);
+    
+      const loginWithGoogle = async () => {
+          setIsLoading(true);
+          try {
+            await signIn('google', {
+              callbackUrl: process.env.NEXT_PUBLIC_APP_URL,
+            });
+          } catch (error) {
+            console.log(error, 'error');
+            toast({
+              variant: 'destructive',
+              description: 'Something went wrong while logging with your Google account.',
+            });
+          } finally {
+            setIsLoading(false);
+          }
+        };
+      
+        const loginWithGitHub = async () => {
+          setIsLoading(true);
+          try {
+            await signIn('github', {
+              callbackUrl: process.env.NEXT_PUBLIC_APP_URL,
+            });
+          } catch (error) {
+            console.log(error, 'error');
+            toast({
+              variant: 'destructive',
+              description: 'Something went wrong while logging with your GitHub account.',
+            });
+          } finally {
+            setIsLoading(false);
+          }
+        };
+  
+    return (
+      <div className={cn('grid gap-6')}>
+        <div className="relative">
+          <div className="absolute inset-0 flex items-center">
+            <span className="w-full border-t" />
+          </div>
+          <div className="relative flex justify-center text-xs uppercase">
+            <span className="bg-background px-2 text-muted-foreground">
+              Or continue with
+            </span>
+          </div>
+        </div>
+        <div className="grid grid-cols-2 gap-4">
+        <Button variant="outline" type="button" disabled={isLoading} onClick={loginWithGitHub}>
+            {isLoading ? (
+              <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              <Icons.github className="mr-2 h-4 w-4" />
+            )}{' '}
+            Github
+          </Button>
+          <Button variant="outline" type="button" disabled={isLoading} onClick={loginWithGoogle}>
+            {isLoading ? (
+              <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              <Icons.google className="mr-2 h-4 w-4" />
+            )}{' '}
+            Google
+          </Button>
+        </div>
+  
+        <div className="relative">
+          <div className="absolute inset-0 flex items-center">
+            <span className="w-full border-t" />
+          </div>
+          <div className="relative flex justify-center text-xs uppercase">
+            <span className="bg-background px-2 text-muted-foreground">
+              Or continue with
+            </span>
+          </div>
+        </div>
+  
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="space-y-2 w-full"
+          >
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="email"
+                      placeholder="Enter your email..."
+                      disabled={loading}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+  
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Password</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="password"
+                      placeholder="Enter your password..."
+                      disabled={loading}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+  
+            <Button disabled={loading} className="ml-auto w-full" type="submit">
+              Continue With Email
+            </Button>
+          </form>
+        </Form>
+  
+      </div>
+    );
+  }
